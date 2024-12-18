@@ -1,0 +1,13 @@
+- name: Launching the Gitea container
+  containers.podman.podman_container:
+    name: quay
+    ports:
+      - "{{ deploy_minimal_gitea_gui_http_port }}:3000"
+      - "{{ deploy_minimal_gitea_gui_https_port }}:8443"
+    image: "docker.io/gitea/gitea:1.22.6" 
+    env:
+      GITEA_database__DB_TYPE: postgres
+      GITEA__database__HOST: "{{ deploy_minimal_gitea_reg_fqdn }}:{{ deploy_minimal_gitea_psql_port }}"
+      GITEA__database__NAME: "{{ deploy_minimal_gitea_psql_database }}"
+      GITEA__database__USER: "{{ deploy_minimal_gitea_psql_user }}"
+      GITEA__database__PASSWD: "{{ deploy_minimal_gitea_psql_password }}"

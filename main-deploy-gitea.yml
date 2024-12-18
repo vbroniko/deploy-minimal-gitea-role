@@ -1,0 +1,19 @@
+- name: Test upgrade role
+  hosts: localhost 
+  vars:
+    #GITEA VARIABLES
+    deploy_minimal_gitea_gui_http_port: 3000
+    deploy_minimal_gitea_gui_https_port: 8443
+    #POSTGRESQL VARIABLES
+    deploy_minimal_gitea_psql_port: 5433
+    deploy_minimal_gitea_psql_user: giteauser
+    deploy_minimal_gitea_psql_password: giteapassword
+    deploy_minimal_gitea_psql_database: gitea
+    deploy_minimal_gitea_psql_admin_password: adminpass
+    deploy_minimal_gitea_reg_fqdn: gitea-server.example.com
+    #GENERAL VARIABLES
+    deploy_minimal_gitea_install_dir: "/opt/gitea"
+  tasks: 
+    - name: Test role 
+      include_role: 
+        name: deploy-minimal-gitea

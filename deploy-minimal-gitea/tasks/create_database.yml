@@ -1,0 +1,34 @@
+- name: Create the Gitea target installation directory
+  ansible.builtin.file:
+    path: "{{ deploy_minimal_gitea_install_dir }}"
+    state: directory
+
+- name: Create the PostgresQL target installation directory
+  ansible.builtin.file:
+    path: "{{ deploy_minimal_gitea_install_dir }}/postgres-gitea"
+    state: directory
+
+- name: Set PostgresQL ACLs on {{ deploy_minimal_gitea_install_dir }}/postgres-gitea
+  ansible.posix.acl:
+    path: "{{ deploy_minimal_gitea_install_dir }}/postgres-gitea"
+    entity: "26"
+    etype: user
+    permissions: wx
+    state: present
+
+- name: Launching the PostgresQL container
+  containers.podman.podman_container:
+    name: postgresql-gitea
+    ports:
+      - "{{ deploy_minimal_gitea_psql_port }}:5432"
+    env:
+      POSTGRES_USER: "{{ deploy_minimal_gitea_psql_user }}"
+      POSTGRES_PASSWORD: "{{ deploy_minimal_gitea_psql_password }}"
+      POSTGRES_DB: "{{ deploy_minimal_gitea_psql_database }}"
+      POSTGRES_ADMIN_PASSWORD: "{{ deploy_minimal_gitea_psql_admin_password }}"
+    image: "docker.io/library/postgres:14"
+    volume: "{{ deploy_minimal_gitea_install_dir }}/postgres-gitea:/var/lib/pgsql/data:Z"
+
+- name: Wait a little bit for PostgresQL to be up and running
+  ansible.builtin.pause:
+    seconds: 5
